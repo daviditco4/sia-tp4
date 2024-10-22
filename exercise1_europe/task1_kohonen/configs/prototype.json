@@ -1,0 +1,8 @@
+{
+  "width": 5,
+  "height": 5,
+  "radius": 2.0,
+  "learning_rate": 0.5,
+  "distance_method": "euclidean",
+  "iterations": 1000
+}
