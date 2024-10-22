@@ -1,14 +1,14 @@
+import os
+import sys
+
 import numpy as np
-import pandas as pd
-import json
 from scipy.spatial.distance import euclidean
 
+# Add the path to the folder containing utils.py
+sys.path.append(os.path.abspath("."))
 
-# Load configuration from JSON file
-def load_config(json_file):
-    with open(json_file, 'r') as file:
-        config = json.load(file)
-    return config
+# Now you can import load_config, load_csv_data, standardize_data
+from utils import load_config, load_csv_data, standardize_data
 
 
 # Kohonen Self-Organizing Map class
@@ -71,17 +71,6 @@ class KohonenSOM:
         return self.weights
 
 
-# Example usage with a CSV file containing unstandardized data
-def load_csv_data(csv_file):
-    # Load the CSV file into a DataFrame
-    data = pd.read_csv(csv_file)
-
-    # Remove the first column (by index)
-    data = data.drop(data.columns[0], axis=1)
-
-    return data.values
-
-
 if __name__ == "__main__":
     # Load configuration from JSON file
     config = load_config('exercise1_europe/task1_kohonen/configs/prototype.json')
@@ -89,17 +78,20 @@ if __name__ == "__main__":
     # Load unstandardized data from CSV file
     data = load_csv_data('exercise1_europe/task1_kohonen/data/europe.csv')
 
+    # Standardize the data
+    standardized_data = standardize_data(data)
+
     # Initialize Kohonen SOM with configuration from JSON
     som = KohonenSOM(width=config['width'],
                      height=config['height'],
-                     input_dim=data.shape[1],
+                     input_dim=standardized_data.shape[1],
                      radius=config['radius'],
                      learning_rate=config['learning_rate'],
                      distance_method=config['distance_method'],
                      iterations=config['iterations'])
 
-    # Train the SOM with the loaded data
-    som.train(data)
+    # Train the SOM with the standardized data
+    som.train(standardized_data)
 
     # Print final weights
     print("Final SOM Weights:")
