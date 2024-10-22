@@ -11,7 +11,7 @@ def load_config(json_file):
     return config
 
 
-# Example usage with a CSV file containing unstandardized data
+# Load the CSV file containing unstandardized data
 def load_csv_data(csv_file):
     # Load the CSV file into a DataFrame
     data = pd.read_csv(csv_file)

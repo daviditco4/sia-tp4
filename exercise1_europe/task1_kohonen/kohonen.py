@@ -1,8 +1,10 @@
 import os
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial.distance import euclidean
+import seaborn as sns
 
 # Add the path to the folder containing utils.py
 sys.path.append(os.path.abspath("."))
@@ -23,6 +25,9 @@ class KohonenSOM:
 
         # Initialize weights randomly
         self.weights = np.random.rand(width, height, input_dim)
+
+        # Initialize grid to count data points assigned to each neuron (for the heatmap)
+        self.assignment_counts = np.zeros((width, height))
 
         # Choose the distance method (Euclidean by default)
         if distance_method == 'euclidean':
@@ -45,6 +50,9 @@ class KohonenSOM:
 
             # Update the BMU and its neighbors
             self.update_weights(input_vector, bmu_idx, learning_rate, radius)
+
+            # Increment the assignment count for the BMU
+            self.assignment_counts[bmu_idx] += 1
 
     def find_bmu(self, input_vector):
         """Find the Best Matching Unit (BMU) for a given input vector."""
@@ -70,6 +78,23 @@ class KohonenSOM:
     def get_weights(self):
         return self.weights
 
+    def plot_heatmap(self):
+        """Plot a heatmap of the number of assignments per neuron with integer formatting."""
+        plt.figure(figsize=(10, 7))
+
+        # Create the heatmap and format annotations as integers
+        sns.heatmap(self.assignment_counts,
+                    annot=True,
+                    cmap='coolwarm',
+                    cbar=True,
+                    fmt='g',  # 'g' means general format (no scientific notation)
+                    annot_kws={"size": 12, "weight": "bold", "color": "black"})  # Customize annotation appearance
+
+        plt.title('Heatmap of Neuron Assignments')
+        plt.xlabel('Neuron X')
+        plt.ylabel('Neuron Y')
+        plt.show()
+
 
 if __name__ == "__main__":
     # Load configuration from JSON file
@@ -93,6 +118,5 @@ if __name__ == "__main__":
     # Train the SOM with the standardized data
     som.train(standardized_data)
 
-    # Print final weights
-    print("Final SOM Weights:")
-    print(som.get_weights())
+    # Plot heatmap of assignments per neuron
+    som.plot_heatmap()
