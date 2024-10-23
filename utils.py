@@ -19,7 +19,7 @@ def load_csv_data(csv_file):
     # Remove the first column (by index)
     data = data.drop(data.columns[0], axis=1)
 
-    return data.values
+    return data.to_numpy()
 
 
 # Standardize the input data (mean=0, variance=1)

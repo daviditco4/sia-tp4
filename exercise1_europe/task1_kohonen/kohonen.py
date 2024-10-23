@@ -101,7 +101,7 @@ if __name__ == "__main__":
     config = load_config('exercise1_europe/task1_kohonen/configs/prototype.json')
 
     # Load unstandardized data from CSV file
-    data = load_csv_data('exercise1_europe/task1_kohonen/data/europe.csv')
+    data = load_csv_data('exercise1_europe/data/europe.csv')
 
     # Standardize the data
     standardized_data = standardize_data(data)
