@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 from Oja import Oja  # Import the Oja class from the oja.py script.
@@ -27,7 +28,18 @@ def main():
         eigenvector = oja.train(limit=limit)
 
         # Print the first principal component eigenvector (PC1) with values rounded to 3 decimal places.
-        print(f"El autovector de PC1 es: {eigenvector.round(3).tolist()}")  # "The eigenvector for PC1 is:"
+        eigenvector_rounded = eigenvector.round(3).tolist()
+        print(f"El autovector de PC1 es: {eigenvector_rounded}")  # "The eigenvector for PC1 is:"
+
+         # Save the result to a file in the 'outputs' folder
+        output_dir = "outputs"
+        os.makedirs(output_dir, exist_ok=True)  # Create the 'outputs' folder if it doesn't exist
+        output_file_path = os.path.join(output_dir, "PC1_eigenvector.txt")
+
+        with open(output_file_path, "w") as output_file:
+            output_file.write(f"El autovector de PC1 es: {eigenvector_rounded}\n")
+    
+        print(f"PC1 eigenvector saved to {output_file_path}")
 
 
 # Run the main function if this script is executed from the terminal.
