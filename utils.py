@@ -13,13 +13,8 @@ def load_config(json_file):
 
 # Load the CSV file containing unstandardized data
 def load_csv_data(csv_file):
-    # Load the CSV file into a DataFrame
     data = pd.read_csv(csv_file)
-
-    # Remove the first column (by index)
-    data = data.drop(data.columns[0], axis=1)
-
-    return data.values
+    return data[data.columns[0]], data.drop(data.columns[0], axis=1).to_numpy()
 
 
 # Standardize the input data (mean=0, variance=1)
