@@ -91,8 +91,38 @@ class KohonenSOM:
                     weight_update = learning_rate * (input_vector - self.weights[i, j])
                     self.weights[i, j] += weight_update
 
-    def get_weights(self):
-        return self.weights
+    def calculate_u_matrix(self):
+        """Calculate the Unified Distance Matrix (U-Matrix)."""
+        u_matrix = np.zeros((self.width, self.height))
+
+        for i in range(self.width):
+            for j in range(self.height):
+                neighbors = []
+
+                # Get neighbors (within grid bounds)
+                for di in [-1, 0, 1]:
+                    for dj in [-1, 0, 1]:
+                        if (di != 0 or dj != 0) and (0 <= i + di < self.width) and (0 <= j + dj < self.height):
+                            neighbors.append(self.weights[i + di, j + dj])
+
+                # Calculate the average distance to all neighbors
+                if neighbors:
+                    u_matrix[i, j] = np.mean(
+                        [self.distance_method(self.weights[i, j], neighbor) for neighbor in neighbors])
+
+        return u_matrix
+
+    def plot_u_matrix(self):
+        """Plot the Unified Distance Matrix (U-Matrix)."""
+        u_matrix = self.calculate_u_matrix()
+
+        plt.figure(figsize=(10, 7))
+        sns.heatmap(u_matrix, cmap='plasma', cbar=True)
+        plt.title('Unified Distance Matrix (U-Matrix)')
+        plt.xlabel('Neuron X')
+        plt.ylabel('Neuron Y')
+        plt.savefig("kohonen_u_matrix2.png", dpi=300, bbox_inches='tight')
+        plt.close()
 
     def plot_heatmap(self, labels):
         """Plot a heatmap with concatenated labels for final assignments per neuron."""
@@ -114,7 +144,8 @@ class KohonenSOM:
         plt.title('Heatmap of Final Neuron Assignments with Labels')
         plt.xlabel('Neuron X')
         plt.ylabel('Neuron Y')
-        plt.show()
+        plt.savefig("kohonen_heatmap2.png", dpi=300, bbox_inches='tight')
+        plt.close()
 
 
 if __name__ == "__main__":
@@ -142,3 +173,6 @@ if __name__ == "__main__":
 
     # Plot heatmap of final assignments with labels
     som.plot_heatmap(labels)
+
+    # Plot the U-Matrix
+    som.plot_u_matrix()
