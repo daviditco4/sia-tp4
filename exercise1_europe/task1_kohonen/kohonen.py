@@ -1,3 +1,4 @@
+import math
 import os
 import sys
 
@@ -15,13 +16,16 @@ from utils import load_config, load_csv_data, standardize_data
 
 # Kohonen Self-Organizing Map class
 class KohonenSOM:
-    def __init__(self, width, height, input_dim, radius, learning_rate, distance_method='euclidean', iterations=1000):
+    def __init__(self, width, height, input_dim, radius, learning_rate, distance_method='euclidean', iterations=1000,
+                 decay_rate=0.0):
         self.width = width
         self.height = height
         self.radius = radius
+        self.initial_radius = radius  # Save the initial radius for shrinking
         self.learning_rate = learning_rate
         self.iterations = iterations
         self.input_dim = input_dim
+        self.decay_rate = decay_rate
 
         # Initialize weights randomly
         self.weights = np.random.rand(width, height, input_dim)
@@ -42,9 +46,11 @@ class KohonenSOM:
         num_samples = data.shape[0]
 
         for it in range(self.iterations):
-            # Reduce learning rate and radius over time
+            # Reduce learning rate over time
             learning_rate = self.learning_rate * (1 - it / self.iterations)
-            radius = self.radius * (1 - it / self.iterations)
+
+            # Optionally shrink the radius towards 1 if `decay_rate` is positive
+            radius = 1 + (self.initial_radius - 1) * math.exp(-self.decay_rate * it)
 
             # Randomly select an input vector
             random_idx = np.random.randint(0, num_samples)
@@ -128,7 +134,8 @@ if __name__ == "__main__":
                      radius=config['radius'],
                      learning_rate=config['learning_rate'],
                      distance_method=config['distance_method'],
-                     iterations=config['iterations'])
+                     iterations=config['iterations'],
+                     decay_rate=config['decay_rate'])
 
     # Train the SOM with the standardized data
     som.train(standardized_data)
