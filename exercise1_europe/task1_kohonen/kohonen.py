@@ -147,6 +147,28 @@ class KohonenSOM:
         plt.savefig("kohonen_heatmap2.png", dpi=300, bbox_inches='tight')
         plt.close()
 
+    def plot_weight_component_heatmap(self, component_idx):
+        """
+        Plot a heatmap for a single component of the neuron weights.
+        `component_idx` is the index of the component you want to visualize.
+        Example: If weight is [w1, w2, w3], and component_idx=1, it'll plot w1 values.
+        """
+        # Extract the component values from the weights
+        weight_component = np.zeros((self.width, self.height))
+
+        for i in range(self.width):
+            for j in range(self.height):
+                weight_component[i, j] = self.weights[i, j, component_idx]  # Select nth component
+
+        # Plot the heatmap
+        plt.figure(figsize=(10, 7))
+        sns.heatmap(weight_component, annot=False, cmap="viridis", cbar=True)
+        plt.title(f"Heatmap of Weight Component {component_idx + 1}")
+        plt.xlabel("Neuron X")
+        plt.ylabel("Neuron Y")
+        plt.savefig("kohonen_weight_component_heatmap2.png", dpi=300, bbox_inches='tight')
+        plt.close()
+
 
 if __name__ == "__main__":
     # Load configuration from JSON file
@@ -176,3 +198,6 @@ if __name__ == "__main__":
 
     # Plot the U-Matrix
     som.plot_u_matrix()
+
+    # Plot a heatmap for the second weight component (index 1)
+    som.plot_weight_component_heatmap(1)  # You can change the index for different components
