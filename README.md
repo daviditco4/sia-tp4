@@ -12,7 +12,7 @@ Customize the SOM parameters in prototype.json:
 * learning_rate: The learning rate of the SOM.
 * distance_method: The method used to calculate the distance between neurons.
 * iterations: The number of iterations to train the SOM.
-* decay_rate: The rate at which the learning rate and radius decay.
+* decay_rate: The rate at which the radius decay.
 * init_from_data: Whether to initialize weights based on the input data.
 
 ## How to use
