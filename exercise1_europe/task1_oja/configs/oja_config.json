@@ -1,0 +1,5 @@
+{
+    "input": "data/europe.csv",
+    "eta": 0.08766557934,
+    "limit": 10000
+}
