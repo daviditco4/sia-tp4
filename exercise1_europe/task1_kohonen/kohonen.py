@@ -17,7 +17,7 @@ from utils import load_config, load_csv_data, standardize_data
 # Kohonen Self-Organizing Map class
 class KohonenSOM:
     def __init__(self, width, height, input_dim, radius, learning_rate, distance_method='euclidean', iterations=1000,
-                 decay_rate=0.0):
+                 decay_rate=0.0, init_from_data=False):
         self.width = width
         self.height = height
         self.radius = radius
@@ -27,8 +27,9 @@ class KohonenSOM:
         self.input_dim = input_dim
         self.decay_rate = decay_rate
 
-        # Initialize weights randomly
-        self.weights = np.random.rand(width, height, input_dim)
+        # Option to initialize weights from a set of data entries
+        self.init_from_data = init_from_data
+        self.weights = None
 
         # Matrix to store lists of assigned data point indices for each neuron
         self.final_assignments = [[[] for _ in range(height)] for _ in range(width)]
@@ -42,7 +43,32 @@ class KohonenSOM:
         else:
             raise ValueError(f"Distance method '{distance_method}' not supported.")
 
+    def initialize_weights_from_data(self, data):
+        """
+        Initialize the weights using a random sample from the input data.
+        The number of neurons is width * height, and the data should have at least that many entries.
+        """
+        num_neurons = self.width * self.height
+        num_samples = data.shape[0]
+
+        if num_samples < num_neurons:
+            raise ValueError(
+                "Not enough data points to initialize weights. The number of samples should be greater than or equal to width * height.")
+
+        # Randomly sample data points and assign them as initial weights
+        random_indices = np.random.choice(num_samples, size=num_neurons, replace=False)
+        weights_from_data = data[random_indices]
+
+        # Reshape the weights into the output grid dimensions (width, height, input_dim)
+        return weights_from_data.reshape(self.width, self.height, self.input_dim)
+
     def train(self, data):
+        # Initialize weights
+        if self.init_from_data:
+            self.weights = self.initialize_weights_from_data(data)
+        else:
+            self.weights = np.random.rand(self.width, self.height, self.input_dim)  # Random initialization
+
         num_samples = data.shape[0]
 
         for it in range(self.iterations):
@@ -121,7 +147,7 @@ class KohonenSOM:
         plt.title('Unified Distance Matrix (U-Matrix)')
         plt.xlabel('Neuron X')
         plt.ylabel('Neuron Y')
-        plt.savefig("kohonen_u_matrix2.png", dpi=300, bbox_inches='tight')
+        plt.savefig("kohonen_u_matrix1.png", dpi=300, bbox_inches='tight')
         plt.close()
 
     def plot_heatmap(self, labels):
@@ -144,7 +170,7 @@ class KohonenSOM:
         plt.title('Heatmap of Final Neuron Assignments with Labels')
         plt.xlabel('Neuron X')
         plt.ylabel('Neuron Y')
-        plt.savefig("kohonen_heatmap2.png", dpi=300, bbox_inches='tight')
+        plt.savefig("kohonen_heatmap1.png", dpi=300, bbox_inches='tight')
         plt.close()
 
     def plot_weight_component_heatmap(self, component_idx):
@@ -166,7 +192,7 @@ class KohonenSOM:
         plt.title(f"Heatmap of Weight Component {component_idx + 1}")
         plt.xlabel("Neuron X")
         plt.ylabel("Neuron Y")
-        plt.savefig("kohonen_weight_component_heatmap2.png", dpi=300, bbox_inches='tight')
+        plt.savefig("kohonen_weight_component_heatmap1.png", dpi=300, bbox_inches='tight')
         plt.close()
 
 
@@ -188,7 +214,8 @@ if __name__ == "__main__":
                      learning_rate=config['learning_rate'],
                      distance_method=config['distance_method'],
                      iterations=config['iterations'],
-                     decay_rate=config['decay_rate'])
+                     decay_rate=config['decay_rate'],
+                     init_from_data=config['init_from_data'])
 
     # Train the SOM with the standardized data
     som.train(standardized_data)

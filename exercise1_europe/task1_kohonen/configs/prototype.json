@@ -5,5 +5,6 @@
   "learning_rate": 0.5,
   "distance_method": "euclidean",
   "iterations": 1000,
-  "decay_rate": 0.01
+  "decay_rate": 0.01,
+  "init_from_data": true
 }
