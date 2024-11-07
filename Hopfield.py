@@ -104,43 +104,70 @@ def run_experiments(hopfield_net, original_pattern, patterns, noise_level=0.1, n
     converged_percentages = (converged_counts / num_experiments) * 100
     return converged_percentages
 
-# Define the original patterns for A, J, M, L using -1 and 1
 patterns = [
     np.array([[1,  1,  1,  1, 1],
+              [1, -1, -1, -1,-1],
+              [1, -1,  1,  1, 1],
               [1, -1, -1, -1, 1],
-              [1,  1,  1,  1, 1],
-              [1, -1, -1, -1, 1],
-              [1, -1, -1, -1, 1]]),  # A
-    np.array([[ 1, 1,  1,  1,  1],
-              [-1, -1, 1, -1, -1],
-              [-1, -1, 1, -1, -1],
+              [1,  1,  1,  1, 1]]),  # G
+    np.array([[ 1, -1, -1, 1, -1],
               [ 1, -1, 1, -1, -1],
-              [ 1,  1, 1, -1, -1]]),  # J
-    np.array([[1, -1, -1, -1, 1],
-              [1,  1, -1,  1, 1],
-              [1, -1,  1, -1, 1],
-              [1, -1, -1, -1, 1],
-              [1, -1, -1, -1, 1]]),  # M
-    np.array([[1, -1, -1, -1, -1],
-              [1, -1, -1, -1, -1],
-              [1, -1, -1, -1, -1],
-              [1, -1, -1, -1, -1],
-              [1, 1, 1, 1, 1]])   # L
+              [ 1, 1, -1, -1, -1],
+              [ 1, -1, 1, -1, -1],
+              [ 1, -1, -1, 1, -1]]),  # K
+    np.array([[ 1,  1, 1,  1, 1],
+              [-1, -1, 1, -1, -1],
+              [-1, -1, 1, -1, -1],
+              [-1, -1, 1, -1, -1],
+              [-1, -1, 1, -1, -1]]),  # T
+    np.array([[ 1, -1, -1, -1,  1],
+              [ 1, -1, -1, -1,  1],
+              [ 1, -1, -1, -1,  1],
+              [-1,  1, -1,  1, -1],
+              [-1, -1,  1, -1, -1]])   # V
 ]
 
-letras = ['A', 'J', 'M', 'L']
+pattern_bottom = [
+    np.array([[1,  1,  1,  1, -1],
+              [1, -1, -1, -1, 1],
+              [1, -1,  -1,  -1, 1],
+              [1, -1, -1, -1, 1],
+              [1,  1,  1,  1, -1]]),  # D
+    np.array([[1,  1,  1,  1, 1],
+              [1, -1, -1, -1,-1],
+              [1, -1,  1,  1, 1],
+              [1, -1, -1, -1, 1],
+              [1,  1,  1,  1, 1]]),  # G
+    np.array([[ 1,  1,  1,  1, 1],
+              [ 1, -1, -1, -1, 1],
+              [ 1, -1, -1, -1, 1],
+              [ 1, -1, -1, -1, 1],
+              [ 1,  1,  1,  1, 1]]),  # O
+    np.array([[ 1,  1,  1,  1, 1],
+              [ 1, -1, -1, -1, 1],
+              [ 1, -1,  1, -1, 1],
+              [ 1, -1, -1,  1, 1],
+              [ 1,  1,  1,  1, 1]])   # Q
+]
+
+
+letras = ['G', 'K', 'T', 'V']
+letras_bottom = ['D', 'G', 'O', 'Q']
 noise_levels = [0.1, 0.3, 0.5]
+
+test_letters = letras_bottom #letras para mejor caso, letras_bottom para peor
+test_patterns = pattern_bottom #patterns para mejor caso, pattern_bottom para peor
 
 # Initialize the Hopfield Network
 hopfield_net = HopfieldNetwork(size=25)
-hopfield_net.train(patterns)
+hopfield_net.train(test_patterns)
 
 for i in range(len(noise_levels)):
     # Create a noisy version of one of the patterns (e.g., A)
-    noisy_pattern0 = HopfieldNetwork.add_noise(patterns[0], noise_level=noise_levels[i])
-    noisy_pattern1 = HopfieldNetwork.add_noise(patterns[1], noise_level=noise_levels[i])
-    noisy_pattern2 = HopfieldNetwork.add_noise(patterns[2], noise_level=noise_levels[i])
-    noisy_pattern3 = HopfieldNetwork.add_noise(patterns[3], noise_level=noise_levels[i])
+    noisy_pattern0 = HopfieldNetwork.add_noise(test_patterns[0], noise_level=noise_levels[i])
+    noisy_pattern1 = HopfieldNetwork.add_noise(test_patterns[1], noise_level=noise_levels[i])
+    noisy_pattern2 = HopfieldNetwork.add_noise(test_patterns[2], noise_level=noise_levels[i])
+    noisy_pattern3 = HopfieldNetwork.add_noise(test_patterns[3], noise_level=noise_levels[i])
 
     # Show the noisy pattern
     #HopfieldNetwork.plot_patterns([noisy_pattern], title="Noisy Pattern")
@@ -158,15 +185,15 @@ for i in range(len(noise_levels)):
     HopfieldNetwork.plot_patterns(history3, title="Recovery Steps")
 
 for j in range(len(noise_levels)):
-    for k in range(len(patterns)):
-        print(f"Porcentajes de convergencia para la letra inicial {letras[k]}, with noise level {noise_levels[j]}")
+    for k in range(len(test_patterns)):
+        print(f"Porcentajes de convergencia para la letra inicial {test_letters[k]}, with noise level {noise_levels[j]}")
         # Patrón original para realizar las pruebas (por ejemplo, la letra A)
-        original_pattern = patterns[k]
+        original_pattern = test_patterns[k]
 
         # Ejecutar los experimentos
-        percentages = run_experiments(hopfield_net, original_pattern, patterns, noise_level=noise_levels[j], num_experiments=1000)
+        percentages = run_experiments(hopfield_net, original_pattern, test_patterns, noise_level=noise_levels[j], num_experiments=1000)
 
         # Mostrar los resultados
-        for i, pattern in enumerate(patterns):
-            print(f"Porcentaje de convergencia a la letra {letras[i]}: {percentages[i]:.2f}%")
+        for i, pattern in enumerate(test_patterns):
+            print(f"Porcentaje de convergencia a la letra {test_letters[i]}: {percentages[i]:.2f}%")
         print(f"Porcentaje de convergencia a un estado espurio: {percentages[-1]:.2f}%")

@@ -45,10 +45,17 @@ python3 barplot.py configs/plot_config.json
 --
 This script will create a bar plot with the projections of each country on PC1, allowing you to visually interpret how each country aligns with the main dimension of variance in the dataset.
 
-# Task 1.3 - Reconstruction of 5x5 'pixelated' letters with Hopfield
+# Task 2 - Reconstruction of 5x5 'pixelated' letters with Hopfield
 
 This task involves using 4 patterns so that the Hopfield Model can learn from it and then you try to reconstruct altered patterns by different levels of noise, and then calculate the accuracy percentage and see and analize for spurious states.
 
 # Running the Script
 
-For Hopfield just run the python file Hopfield.py
+To See the "pixelated" letters run LetrasHopfield.py
+To See the top and bottom 20 ranking of ortogonality run Ortogonalidad.py
+To See the Energy function graphs run newHopfield.py
+To See the Reconstruction of the Letters with noise and the accuracy porcentages run Hopfield.py
+
+For both Hopfield.py and newHopfield.py to test both best and worst case of group of letters you can change:
+	test_letters to letras for best case, letras_bottom for worst case
+	test_patterns to patterns for best case, pattern_bottom for worst case
